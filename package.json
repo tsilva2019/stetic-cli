@@ -1,0 +1,27 @@
+{
+  "name": "stetic-cli-back-end",
+  "version": "1.0.0",
+  "description": "API para o sistema Stetic-Cli",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "test": "\"echo \\\"Error: no test specified\\\" && exit 1\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tsilva2019/stetic-cli.git"
+  },
+  "author": "Tiago N. Silva",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tsilva2019/stetic-cli/issues"
+  },
+  "homepage": "https://github.com/tsilva2019/stetic-cli#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.19"
+  },
+  "dependencies": {
+    "express": "^4.18.1"
+  }
+}
