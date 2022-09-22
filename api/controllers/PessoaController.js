@@ -2,9 +2,18 @@ const database = require('../models')
 
 class PessoaController{
 
-    static async listAll(req,res) {
+    static async listAllAtivas(req,res) {
         try {
             const pessoas = await database.Pessoas.findAll();
+            return res.status(200).json(pessoas);
+        } catch(error) {
+            res.status(500).send(error.message);
+        }
+    }
+
+    static async listAll(req,res) {
+        try {
+            const pessoas = await database.Pessoas.scope('all').findAll();
             return res.status(200).json(pessoas);
         } catch(error) {
             res.status(500).send(error.message);
@@ -22,7 +31,7 @@ class PessoaController{
     }
 
     static async buscaAgendamentoCliente(req, res) {
-        const { clienteId, agendamentoId } = req.params
+        const { clienteId, agendamentoId } = req.params;
         try {
             const agendamento = await database.Agendamentos.findOne(
                 { 
@@ -33,6 +42,70 @@ class PessoaController{
             return res.status(200).json(agendamento);
         } catch (error) {
             return res.status(500).send(error.message);
+        }
+    }
+
+    static async buscaAgendamentosConfimados(req, res) {
+        const { clienteId } = req.params;
+
+        try {
+            const cliente = await database.Pessoas.findOne({
+                where: {
+                    id: Number(clienteId)
+                }
+            })
+            const agendamentosConfirmado = await cliente.getAgendamentosConfirmado();
+            return res.status(200).json(agendamentosConfirmado);
+        } catch (error) {
+            return res.status(500).json(error.message)
+        }
+    }
+
+    static async buscaAgendamentosPendente(req, res) {
+        const { clienteId } = req.params;
+
+        try {
+            const cliente = await database.Pessoas.findOne({
+                where: {
+                    id: Number(clienteId)
+                }
+            })
+            const agendamentosPendente = await cliente.getAgendamentosPendente();
+            return res.status(200).json(agendamentosPendente);
+        } catch (error) {
+            return res.status(500).json(error.message)
+        }
+    }
+
+    static async buscaAgendamentosCancelado(req, res) {
+        const { clienteId } = req.params;
+
+        try {
+            const cliente = await database.Pessoas.findOne({
+                where: {
+                    id: Number(clienteId)
+                }
+            })
+            const agendamentosCancelado = await cliente.getAgendamentosCancelado();
+            return res.status(200).json(agendamentosCancelado);
+        } catch (error) {
+            return res.status(500).json(error.message)
+        }
+    }
+
+    static async buscaAgendamentosConcluido(req, res) {
+        const { clienteId } = req.params;
+
+        try {
+            const cliente = await database.Pessoas.findOne({
+                where: {
+                    id: Number(clienteId)
+                }
+            })
+            const agendamentosConcluido = await cliente.getAgendamentosConcluido();
+            return res.status(200).json(agendamentosConcluido);
+        } catch (error) {
+            return res.status(500).json(error.message)
         }
     }
 
@@ -76,7 +149,7 @@ class PessoaController{
         const { id } = req.params;
         const dadosPessoa = req.body;
         try {
-            await database.Pessoas.update(dadosPessoa, { where: { id: Number(id) }});
+            await database.Pessoas.scope('all').update(dadosPessoa, { where: { id: Number(id) }});
             const pessoaAtualizada = await database.Pessoas.findOne({ where: { id: Number(id) }});
             return res.status(200).json(pessoaAtualizada);
         } catch (error) {
@@ -103,7 +176,7 @@ class PessoaController{
     static async removerPessoa(req, res) {
         const { id } = req.params;
         try {
-            await database.Pessoas.destroy({ where: { id: Number(id) }});
+            await database.Pessoas.scope('all').destroy({ where: { id: Number(id) }});
             return res.status(200).json({ mensagem: `Registro ${id} removido com sucesso!` });
         } catch (error) {
             return res.status(500).send(error.message);
