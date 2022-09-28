@@ -4,7 +4,7 @@ class PessoaController{
 
     static async listAllAtivas(req,res) {
         try {
-            const pessoas = await database.Pessoas.findAll();
+            const pessoas = await database.Pessoas.findAndCountAll({ order: [['nome', 'ASC']] });
             return res.status(200).json(pessoas);
         } catch(error) {
             res.status(500).send(error.message);
@@ -13,7 +13,7 @@ class PessoaController{
 
     static async listAll(req,res) {
         try {
-            const pessoas = await database.Pessoas.scope('all').findAll();
+            const pessoas = await database.Pessoas.scope('all').findAndCountAll({ order: [['nome', 'ASC']] });
             return res.status(200).json(pessoas);
         } catch(error) {
             res.status(500).send(error.message);
@@ -49,10 +49,11 @@ class PessoaController{
         const { clienteId } = req.params;
 
         try {
-            const cliente = await database.Pessoas.findOne({
+            const cliente = await database.Pessoas.findAndCountAll({
                 where: {
                     id: Number(clienteId)
-                }
+                },
+                 order: [['data_agendamento', 'ASC']]
             })
             const agendamentosConfirmado = await cliente.getAgendamentosConfirmado();
             return res.status(200).json(agendamentosConfirmado);
@@ -65,10 +66,11 @@ class PessoaController{
         const { clienteId } = req.params;
 
         try {
-            const cliente = await database.Pessoas.findOne({
+            const cliente = await database.Pessoas.findAndCountAll({
                 where: {
                     id: Number(clienteId)
-                }
+                },
+                order: [['data_agendamento', 'ASC']]
             })
             const agendamentosPendente = await cliente.getAgendamentosPendente();
             return res.status(200).json(agendamentosPendente);
@@ -81,10 +83,11 @@ class PessoaController{
         const { clienteId } = req.params;
 
         try {
-            const cliente = await database.Pessoas.findOne({
+            const cliente = await database.Pessoas.findAndCountAll({
                 where: {
                     id: Number(clienteId)
-                }
+                },
+                order: [['data_agendamento', 'ASC']]
             })
             const agendamentosCancelado = await cliente.getAgendamentosCancelado();
             return res.status(200).json(agendamentosCancelado);
@@ -97,10 +100,11 @@ class PessoaController{
         const { clienteId } = req.params;
 
         try {
-            const cliente = await database.Pessoas.findOne({
+            const cliente = await database.Pessoas.findAndCountAll({
                 where: {
                     id: Number(clienteId)
-                }
+                },
+                order: [['data_agendamento', 'ASC']]
             })
             const agendamentosConcluido = await cliente.getAgendamentosConcluido();
             return res.status(200).json(agendamentosConcluido);
@@ -112,11 +116,13 @@ class PessoaController{
     static async buscaAllAgendamentosCliente(req, res) {
         const { clienteId } = req.params
         try {
-            const agendamentos = await database.Agendamentos.findAll(
+            const agendamentos = await database.Agendamentos.findAndCountAll(
                 { 
                     where: {
                          cliente_id: Number(clienteId)
-                        }});
+                        },
+                        order: [['data_agendamento', 'ASC']]
+                    });
             return res.status(200).json(agendamentos);
         } catch (error) {
             return res.status(500).send(error.message);
