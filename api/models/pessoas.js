@@ -13,22 +13,22 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Pessoas.hasMany(models.Agendamentos, {
         foreignKey: 'cliente_id',
-        scope: {
-          status: 'confirmado'
-        }, 
-        as: 'agendamentosConfirmado',
-        scope: {
-          status: 'pendente'
-        },
-        as: 'agendamentosPendente',
-        scope: {
-          status: 'cancelado'
-        },
-        as: 'agendamentosCancelado',
-        scope: {
-          status: 'concluido'
-        },
-        as: 'agendamentosConcluido'
+        // scope: {
+        //   status: 'confirmado'
+        // }, 
+        // as: 'agendamentosConfirmado',
+        // scope: {
+        //   status: 'pendente'
+        // },
+        // as: 'agendamentosPendente',
+        // scope: {
+        //   status: 'cancelado'
+        // },
+        // as: 'agendamentosCancelado',
+        // scope: {
+        //   status: 'concluido'
+        // },
+        // as: 'agendamentosConcluido'
       })
     }
   }

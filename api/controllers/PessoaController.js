@@ -49,13 +49,14 @@ class PessoaController{
         const { clienteId } = req.params;
 
         try {
-            const cliente = await database.Pessoas.findAndCountAll({
-                where: {
-                    id: Number(clienteId)
-                },
-                 order: [['data_agendamento', 'ASC']]
-            })
-            const agendamentosConfirmado = await cliente.getAgendamentosConfirmado();
+            const agendamentosConfirmado = await database.Agendamentos.findAndCountAll(
+                { 
+                    where: {
+                         cliente_id: Number(clienteId),
+                         status: 'confirmado'
+                        },
+                        order: [['data_agendamento', 'ASC']]
+                    });
             return res.status(200).json(agendamentosConfirmado);
         } catch (error) {
             return res.status(500).json(error.message)
@@ -70,7 +71,6 @@ class PessoaController{
                 where: {
                     id: Number(clienteId)
                 },
-                order: [['data_agendamento', 'ASC']]
             })
             const agendamentosPendente = await cliente.getAgendamentosPendente();
             return res.status(200).json(agendamentosPendente);
@@ -87,7 +87,6 @@ class PessoaController{
                 where: {
                     id: Number(clienteId)
                 },
-                order: [['data_agendamento', 'ASC']]
             })
             const agendamentosCancelado = await cliente.getAgendamentosCancelado();
             return res.status(200).json(agendamentosCancelado);
@@ -100,11 +99,10 @@ class PessoaController{
         const { clienteId } = req.params;
 
         try {
-            const cliente = await database.Pessoas.findAndCountAll({
+            const cliente = await database.Pessoas.findOne({
                 where: {
                     id: Number(clienteId)
                 },
-                order: [['data_agendamento', 'ASC']]
             })
             const agendamentosConcluido = await cliente.getAgendamentosConcluido();
             return res.status(200).json(agendamentosConcluido);
