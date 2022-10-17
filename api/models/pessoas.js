@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 'use strict';
 const { notDeepEqual, notEqual } = require('assert');
 const {
@@ -67,7 +69,11 @@ module.exports = (sequelize, DataTypes) => {
         where: {}
       },
       deleted: {
-        where: { deletedAt: true}
+        where: {
+          deletedAt: {
+            [Op.not]: null,
+          }
+        }
       }
     },
     modelName: 'Pessoas',

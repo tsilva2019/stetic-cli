@@ -1,10 +1,12 @@
-const database = require('../models')
+// const database = require('../models')
+const Services = require('../services/services')
+const pessoasServices = new Services('Pessoas')
 
 class PessoaController{
 
     static async listAllAtivas(req,res) {
         try {
-            const pessoas = await database.Pessoas.findAndCountAll({ order: [['nome', 'ASC']] });
+            const pessoas = await pessoasServices.listAll({ order: [['nome', 'ASC']] });
             return res.status(200).json(pessoas);
         } catch(error) {
             res.status(500).send(error.message);
@@ -13,7 +15,16 @@ class PessoaController{
 
     static async listAll(req,res) {
         try {
-            const pessoas = await database.Pessoas.scope('all').findAndCountAll({ order: [['nome', 'ASC']] });
+            const pessoas = await database.Pessoas.scope('all').findAndCountAll({ paranoid: false }, { order: [['nome', 'ASC']] });
+            return res.status(200).json(pessoas);
+        } catch(error) {
+            res.status(500).send(error.message);
+        }
+    }
+
+    static async listDeleted(req,res) {
+        try {
+            const pessoas = await database.Pessoas.scope('deleted').findAndCountAll({ paranoid: false }, { order: [['nome', 'ASC']] });
             return res.status(200).json(pessoas);
         } catch(error) {
             res.status(500).send(error.message);
@@ -131,7 +142,7 @@ class PessoaController{
         const dadosPessoa = req.body;
         try {
             const pessoaCriada = await database.Pessoas.create(dadosPessoa)
-            return res.status(200).json(dadosPessoa);
+            return res.status(200).json(pessoaCriada);
         } catch (error) {
             return res.status(500).send(error.message);
         }
@@ -179,9 +190,22 @@ class PessoaController{
 
     static async removerPessoa(req, res) {
         const { id } = req.params;
+        const statusRemovido = {
+            status: 'removido'
+        }
+        const ativoFalse =  {
+            "ativo": "false"
+        }
+
         try {
-            await database.Pessoas.scope('all').destroy({ where: { id: Number(id) }});
+            database.sequelize.transaction(async (trRemovePessoa) => {
+            await database.Pessoas.scope('all').update(ativoFalse, { where: { id: Number(id) }});
+            await database.Pessoas.scope('all').destroy({ where: { id: Number(id) }}, { transaction: trRemovePessoa });
+            
+            await database.Agendamentos.update(statusRemovido, { where: { cliente_id: Number(id) }}, { transaction: trRemovePessoa });
+            await database.Agendamentos.destroy({ where: { cliente_id: Number(id) }}, { transaction: trRemovePessoa });
             return res.status(200).json({ mensagem: `Registro ${id} removido com sucesso!` });
+            })
         } catch (error) {
             return res.status(500).send(error.message);
         }
@@ -189,8 +213,13 @@ class PessoaController{
 
     static async restaurarPessoa(req, res) {
         const { id } = req.params;
+        const ativoTrue =  {
+            "ativo": "true"
+        }
+
         try {
-            await database.Pessoas.restore({ where: { id: Number(id) }});
+            await database.Pessoas.scope('all').update(ativoTrue, { paranoid: false }, { where: { id: Number(id) }});
+            await database.Pessoas.scope('all').restore({ where: { id: Number(id) }});
             return res.status(200).json({ mensagem: `Registro ${id} restaurado com sucesso!` });
         } catch (error) {
             return res.status(500).send(error.message);

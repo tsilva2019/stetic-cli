@@ -5,6 +5,7 @@ const router = Router();
 
 router.get('/pessoas/all', PessoaController.listAll);
 router.get('/pessoas', PessoaController.listAllAtivas);
+router.get('/pessoas/deleted', PessoaController.listDeleted);
 router.get('/pessoas/:id', PessoaController.buscaByID);
 router.get('/pessoas/:clienteId/agendamentos/:agendamentoId', PessoaController.buscaAgendamentoCliente);
 router.get('/pessoas/:clienteId/agendamentos', PessoaController.buscaAllAgendamentosCliente);

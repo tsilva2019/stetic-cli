@@ -1,3 +1,5 @@
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 'use strict';
 const {
   Model
@@ -22,6 +24,18 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     paranoid: true,
+    scopes: {
+      all: {
+        where: {}
+      },
+      deleted: {
+        where: {
+          deletedAt: {
+            [Op.not]: null,
+          }
+        }
+      }
+    },
     modelName: 'Agendamentos',
   });
   return Agendamentos;
