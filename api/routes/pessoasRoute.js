@@ -16,10 +16,10 @@ router.get('/pessoas/:clienteId/concluido/agendamentos', PessoaController.buscaA
 router.post('/pessoas', PessoaController.criarPessoa);
 router.post('/pessoas/:id/restaura', PessoaController.restaurarPessoa);
 router.post('/pessoas/:clienteId/agendamentos', PessoaController.criarAgendamento);
-router.post('/pessoas/:clienteId/agendamentos/:agendamentoId/restaura', PessoaController.restaurarAgendamento);
+router.post('/pessoas/:clienteId/agendamentos/:agendamentoId/restaura', PessoaController.restaurarAgendamentoPessoa);
 router.put('/pessoas/:id', PessoaController.atualizarPessoa);
 router.put('/pessoas/:clienteId/agendamentos/:agendamentoId', PessoaController.atualizarAgendamento);
 router.delete('/pessoas/:id', PessoaController.removerPessoa);
-router.delete('/pessoas/:clienteId/agendamentos/:agendamentoId', PessoaController.removerAgendamento);
+router.delete('/pessoas/:clienteId/agendamentos/:agendamentoId', PessoaController.removerAgendamentoPessoa);
 
 module.exports = router;
