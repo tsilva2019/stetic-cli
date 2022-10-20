@@ -1,5 +1,5 @@
 // const database = require('../models')
-const Services = require('../services/services')
+const Services = require('../services/Services')
 const pessoasServices = new Services('Pessoas')
 
 class PessoaController{
