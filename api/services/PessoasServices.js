@@ -1,5 +1,6 @@
 const Services = require('./Services')
 const database = require('../models')
+
 class PessoasServices extends Services {
     constructor() {
         super('Pessoas')
@@ -9,6 +10,15 @@ class PessoasServices extends Services {
     async listAll(where = {}) {
         return database[this.modelo].scope('all').findAndCountAll(
             { paranoid: false }, { where : {...where } }, { order: [['nome', 'ASC']] }
+            )
+    }
+
+    async listAllAgendamentosCliente(clienteId) {
+        return this.agendamentos.buscaGeral(
+            {
+                cliente_id: clienteId
+             }, 
+             { order: [['data_agendamento', 'ASC']] }
             )
     }
 

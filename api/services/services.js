@@ -9,14 +9,22 @@ class Services {
         return database[this.modelo].findAndCountAll();
     }
 
-    async buscaByID(id) {
+    async listDeleted() {
+        return database[this.modelo].scope('deleted').findAndCountAll({ paranoid: false }, { order: [['nome', 'ASC']] });
+    }
 
+    async buscaByID(id) {
+        return database[this.modelo].findOne({ where: { id: id } });
+    }
+
+    async buscaGeral(where = {}, agregadores ) {
+        return database[this.modelo].findAndCountAll({ where: { ...where }, ...agregadores });
     }
 
     async createRegistro(dados) {
-
+        return database[this.modelo].create(dados);
     }
-
+    
     async updateRegistro(dadosAtualizados, id, transaction = {}) {
         return database[this.modelo].scope('all').update(dadosAtualizados, { where: { id: id } }, transaction)
     }
